@@ -6,6 +6,7 @@ import com.example.agencia_service.entities.Interesado;
 import com.example.agencia_service.entities.Prueba;
 import com.example.agencia_service.entities.Vehiculo;
 import com.example.agencia_service.repositories.PruebaRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ public class PruebaService {
 
     }
 
-    public Prueba iniciarPrueba(Interesado interesado, Empleado empleado, Vehiculo vehiculo, LocalDateTime fechaHoraInicio) {
+    public Prueba iniciarPrueba(Interesado interesado, Empleado empleado, Vehiculo vehiculo, LocalDateTime fechaHoraInicio, String comentario) {
 
         if (!interesadoService.existeInteresado(interesado.getId())) {
             throw new IllegalArgumentException("No existe el interesado");
@@ -48,7 +49,7 @@ public class PruebaService {
         nuevaPrueba.setEmpleado(empleado);
         nuevaPrueba.setVehiculo(vehiculo);
         nuevaPrueba.setFechaHoraInicio(fechaHoraInicio);
-        nuevaPrueba.setComentarios(null);
+        nuevaPrueba.setComentarios(comentario);
 
 
         return pruebaRepository.save(nuevaPrueba);
@@ -56,19 +57,34 @@ public class PruebaService {
 
         }
 
-    public boolean tienePruebasEnCurso(Vehiculo vehiculo) {
-        return vehiculo.getPruebas().stream().anyMatch(prueba -> prueba.getFechaHoraFin() == null);
+    public Prueba finalizarPrueba(LocalDateTime fechaHoraFin, int idPrueba, String comentario) {
+        Optional<Prueba> optionalPrueba = pruebaRepository.findById((long) idPrueba);
+
+        if (optionalPrueba.isPresent()) {
+            Prueba prueba = optionalPrueba.get();
+
+            prueba.setFechaHoraFin(fechaHoraFin);
+            prueba.setComentarios(comentario);
+
+            pruebaRepository.save(prueba);
+
+            return prueba;
+        } else {
+            throw new EntityNotFoundException("Prueba con id " + idPrueba + " no encontrada.");
+        }
     }
 
 
-        /*public boolean tienePruebasEnCurso(Vehiculo vehiculo) {
-            return vehiculo.getPruebas().stream().anyMatch(prueba -> {
-                LocalDateTime pruebaInicio = prueba.getFechaHoraInicio();
-                LocalDateTime pruebaFin = prueba.getFechaHoraFin();
 
-                return (pruebaInicio.isBefore(fechaHoraFin) && pruebaFin.isAfter(fechaHoraInicio));
-            });
-        }*/
+
+
+
+
+
+
+    public boolean tienePruebasEnCurso(Vehiculo vehiculo) {
+        return vehiculo.getPruebas().stream().anyMatch(prueba -> prueba.getFechaHoraFin() == null);
+    }
 
     public List<Prueba> listarPruebasEnCurso() {
 
@@ -79,6 +95,7 @@ public class PruebaService {
         }
         return pruebasEnCurso;
     }
+
 
 
     }

@@ -45,12 +45,13 @@ public class PruebaController {
         Vehiculo vehiculo = vehiculoService.obtenerVehiculoPorId(pruebaDTO.getVehiculoID());
 
         LocalDateTime fechaHoraInicio = pruebaDTO.getFechaHoraInicio();
-        LocalDateTime fechaHoraFin = pruebaDTO.getFechaHoraFin();
+        String comentario = pruebaDTO.getComentarios();
 
 
 
 
-        Prueba prueba = pruebaService.iniciarPrueba(interesado, empleado, vehiculo, fechaHoraInicio);
+
+        Prueba prueba = pruebaService.iniciarPrueba(interesado, empleado, vehiculo, fechaHoraInicio, comentario);
 
 
 
@@ -74,6 +75,32 @@ public class PruebaController {
 
         return ResponseEntity.ok(pruebasEnCurso);
     }
+
+    @PutMapping("/finalizar")
+    public ResponseEntity<PruebaDTO> finalizarPrueba(@RequestBody PruebaDTO pruebaDTO) {
+        // Obtener datos necesarios del DTO
+        int idPrueba = pruebaDTO.getId();
+        LocalDateTime fechaHoraFin = pruebaDTO.getFechaHoraFin();
+        String comentario = pruebaDTO.getComentarios();
+
+        // Llamar al servicio para finalizar la prueba con el ID dado
+        Prueba prueba = pruebaService.finalizarPrueba(fechaHoraFin, idPrueba, comentario);
+
+        // Actualizar el DTO con los valores finales de la prueba
+        pruebaDTO.setId(prueba.getId());
+        pruebaDTO.setInteresadoID(prueba.getInteresado().getId().intValue());
+        pruebaDTO.setEmpleadoLegajo(prueba.getEmpleado().getLegajo());
+        pruebaDTO.setVehiculoID(prueba.getVehiculo().getId());
+        pruebaDTO.setFechaHoraInicio(prueba.getFechaHoraInicio());
+        pruebaDTO.setFechaHoraFin(prueba.getFechaHoraFin());
+        pruebaDTO.setComentarios(prueba.getComentarios());
+
+        // Devolver el DTO actualizado con estado HTTP 200 (OK)
+        return ResponseEntity.ok(pruebaDTO);
+    }
+
+
+
 }
 
 
