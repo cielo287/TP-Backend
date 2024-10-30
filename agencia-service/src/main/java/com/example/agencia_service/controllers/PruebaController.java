@@ -65,13 +65,19 @@ public class PruebaController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(pruebaDTO);
     }
-    @GetMapping("/en-curso")
+    /*@GetMapping("/en-curso")
     public ResponseEntity<List<Prueba>> listarPruebasEnCurso() {
         List<Prueba> pruebasEnCurso = pruebaService.listarPruebasEnCurso();
 
         if (pruebasEnCurso.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
+
+        return ResponseEntity.ok(pruebasEnCurso);
+    }*/
+    @GetMapping("/en-curso")
+    public ResponseEntity<List<Prueba>> listarPruebasEnCurso() {
+        List<Prueba> pruebasEnCurso = pruebaService.listarPruebasEnCurso(); // Lanzará EntityNotFoundException si no se encuentra nada
 
         return ResponseEntity.ok(pruebasEnCurso);
     }

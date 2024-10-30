@@ -70,6 +70,7 @@ public class PruebaService {
 
             return prueba;
         } else {
+            // Manejo de error en caso de que no se encuentre la prueba con el id proporcionado
             throw new EntityNotFoundException("Prueba con id " + idPrueba + " no encontrada.");
         }
     }
@@ -86,18 +87,17 @@ public class PruebaService {
         return vehiculo.getPruebas().stream().anyMatch(prueba -> prueba.getFechaHoraFin() == null);
     }
 
+
     public List<Prueba> listarPruebasEnCurso() {
+        Optional<List<Prueba>> pruebasEnCurso = Optional.ofNullable(pruebaRepository.findPruebasEnCurso());
 
-        List<Prueba> pruebasEnCurso = pruebaRepository.findPruebasEnCurso();
-
-        if (pruebasEnCurso.isEmpty()){
-            return new ArrayList<>();
-        }
-        return pruebasEnCurso;
+        // Si el Optional está vacío, lanzar una excepción EntityNotFoundException
+        return pruebasEnCurso.orElseThrow(() -> new EntityNotFoundException("No se encontraron pruebas en curso."));
     }
 
 
 
-    }
+
+}
 
 
