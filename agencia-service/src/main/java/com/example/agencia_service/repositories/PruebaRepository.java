@@ -13,8 +13,10 @@ public interface PruebaRepository extends JpaRepository<Prueba, Long>{
 
 
 
-    @Query("SELECT p FROM Pruebas p WHERE :fechaHora BETWEEN p.fechaHoraInicio AND p.fechaHoraFin")
-    List<Prueba> findPruebasEnCurso(@Param("fechaHora") LocalDateTime fechaHora);
+    @Query("SELECT p FROM Pruebas p WHERE p.fechaHoraFin IS NULL")
+    List<Prueba> findPruebasEnCurso();
+
+
 
 
 }

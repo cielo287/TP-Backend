@@ -48,7 +48,9 @@ public class PruebaController {
         LocalDateTime fechaHoraFin = pruebaDTO.getFechaHoraFin();
 
 
-        Prueba prueba = pruebaService.iniciarPrueba(interesado, empleado, vehiculo, fechaHoraInicio, fechaHoraFin);
+
+
+        Prueba prueba = pruebaService.iniciarPrueba(interesado, empleado, vehiculo, fechaHoraInicio);
 
 
 
@@ -63,8 +65,8 @@ public class PruebaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(pruebaDTO);
     }
     @GetMapping("/en-curso")
-    public ResponseEntity<List<Prueba>> listarPruebasEnCurso(@RequestParam("fechaHora") LocalDateTime fechaHora) {
-        List<Prueba> pruebasEnCurso = pruebaService.listarPruebasEnCurso(fechaHora);
+    public ResponseEntity<List<Prueba>> listarPruebasEnCurso() {
+        List<Prueba> pruebasEnCurso = pruebaService.listarPruebasEnCurso();
 
         if (pruebasEnCurso.isEmpty()) {
             return ResponseEntity.noContent().build();

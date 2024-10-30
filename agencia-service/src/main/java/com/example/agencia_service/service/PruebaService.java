@@ -32,12 +32,12 @@ public class PruebaService {
 
     }
 
-    public Prueba iniciarPrueba(Interesado interesado, Empleado empleado, Vehiculo vehiculo, LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraFin) {
+    public Prueba iniciarPrueba(Interesado interesado, Empleado empleado, Vehiculo vehiculo, LocalDateTime fechaHoraInicio) {
 
         if (!interesadoService.existeInteresado(interesado.getId())) {
             throw new IllegalArgumentException("No existe el interesado");
         }
-        if (tienePruebasEnCurso(vehiculo, fechaHoraInicio, fechaHoraFin)) {
+        if (tienePruebasEnCurso(vehiculo)) {
             throw new IllegalArgumentException("El vehiculo esta siendo utilizado en una prueba");
         }
         if (!interesadoService.esLicenciaValida(interesado.getFechaVencimientoLicencia())){
@@ -48,7 +48,6 @@ public class PruebaService {
         nuevaPrueba.setEmpleado(empleado);
         nuevaPrueba.setVehiculo(vehiculo);
         nuevaPrueba.setFechaHoraInicio(fechaHoraInicio);
-        nuevaPrueba.setFechaHoraFin(fechaHoraFin);
         nuevaPrueba.setComentarios(null);
 
 
@@ -57,18 +56,23 @@ public class PruebaService {
 
         }
 
-        public boolean tienePruebasEnCurso(Vehiculo vehiculo, LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraFin) {
+    public boolean tienePruebasEnCurso(Vehiculo vehiculo) {
+        return vehiculo.getPruebas().stream().anyMatch(prueba -> prueba.getFechaHoraFin() == null);
+    }
+
+
+        /*public boolean tienePruebasEnCurso(Vehiculo vehiculo) {
             return vehiculo.getPruebas().stream().anyMatch(prueba -> {
                 LocalDateTime pruebaInicio = prueba.getFechaHoraInicio();
                 LocalDateTime pruebaFin = prueba.getFechaHoraFin();
 
                 return (pruebaInicio.isBefore(fechaHoraFin) && pruebaFin.isAfter(fechaHoraInicio));
             });
-        }
+        }*/
 
-    public List<Prueba> listarPruebasEnCurso(LocalDateTime fechaHora) {
+    public List<Prueba> listarPruebasEnCurso() {
 
-        List<Prueba> pruebasEnCurso = pruebaRepository.findPruebasEnCurso(fechaHora);
+        List<Prueba> pruebasEnCurso = pruebaRepository.findPruebasEnCurso();
 
         if (pruebasEnCurso.isEmpty()){
             return new ArrayList<>();
